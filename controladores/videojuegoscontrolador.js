@@ -183,7 +183,7 @@ const actualizarParcialVideojuego = async (req, res) => {
 };
 
 
-/*const eliminarvideojuego = async (req, res) =>{
+const eliminarvideojuego = async (req, res) =>{
     try {
          const {id} = req.params;
         
@@ -212,12 +212,12 @@ const actualizarParcialVideojuego = async (req, res) => {
         });
     }
 }
-*/
+
 module.exports = {
     obtenertodosLosvideojuegos,
     obtenerVideojuegoPorId,
     crearVideojuego,
     actualizarvideojuego,
-    actualizarParcialVideojuego 
-    /*eliminarvideojuego*/
+    actualizarParcialVideojuego, 
+    eliminarvideojuego
 };

@@ -8,7 +8,7 @@ const {
     crearVideojuego,
     actualizarvideojuego,
     actualizarParcialVideojuego,
-    /*eliminarvideojuego*/
+    eliminarvideojuego
 } = require('./controladores/videojuegoscontrolador');
 
 const app = express();
@@ -28,7 +28,7 @@ app.get('/appi/videojuegos/:id', obtenerVideojuegoPorId);
 app.post('/appi/videojuegos', crearVideojuego);
 app.put('/appi/videojuegos/:id', actualizarvideojuego);
 app.patch('/appi/videojuegos/:id', actualizarParcialVideojuego);
-/*app.delete('/appi/videojuegos/:id', eliminarvideojuego);*/
+app.delete('/appi/videojuegos/:id', eliminarvideojuego);
 
 // Iniciar servidor y probar conexión
 const iniciarServidor = async () => {
