@@ -5,9 +5,9 @@ const { probarConexion } = require('./configuracion/baseDatos');
 const {
     obtenertodosLosvideojuegos,
     obtenerVideojuegoPorId,
-    /*crearVideojuego,
+    crearVideojuego,
     actualizarvideojuego,
-    eliminarvideojuego*/
+    /*eliminarvideojuego*/
 } = require('./controladores/videojuegoscontrolador');
 
 const app = express();
@@ -24,9 +24,9 @@ app.get('/', (req, res) => {
 
 app.get('/appi/videojuegos', obtenertodosLosvideojuegos);
 app.get('/appi/videojuegos/:id', obtenerVideojuegoPorId);
-/*app.post('/appi/videojuegos', crearVideojuego);
+app.post('/appi/videojuegos', crearVideojuego);
 app.put('/appi/videojuegos/:id', actualizarvideojuego);
-app.delete('/appi/videojuegos/:id', eliminarvideojuego);*/
+/*app.delete('/appi/videojuegos/:id', eliminarvideojuego);*/
 
 // Iniciar servidor y probar conexión
 const iniciarServidor = async () => {
