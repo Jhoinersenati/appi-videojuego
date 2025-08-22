@@ -4,8 +4,8 @@ require('dotenv').config();
 const { probarConexion } = require('./configuracion/baseDatos');
 const {
     obtenertodosLosvideojuegos,
-    /*obtenerVideojuegoPorId,
-    crearVideojuego,
+    obtenerVideojuegoPorId,
+    /*crearVideojuego,
     actualizarvideojuego,
     eliminarvideojuego*/
 } = require('./controladores/videojuegoscontrolador');
@@ -23,8 +23,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/appi/videojuegos', obtenertodosLosvideojuegos);
-/*app.get('/appi/videojuegos/:id', obtenerVideojuegoPorId);
-app.post('/appi/videojuegos', crearVideojuego);
+app.get('/appi/videojuegos/:id', obtenerVideojuegoPorId);
+/*app.post('/appi/videojuegos', crearVideojuego);
 app.put('/appi/videojuegos/:id', actualizarvideojuego);
 app.delete('/appi/videojuegos/:id', eliminarvideojuego);*/
 

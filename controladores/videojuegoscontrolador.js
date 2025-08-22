@@ -22,7 +22,7 @@ const obtenertodosLosvideojuegos = async (req, res) => {
     }
 };
 
-/*// Obtener videojuego por ID
+// Obtener videojuego por ID
 const obtenerVideojuegoPorId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -52,7 +52,7 @@ const obtenerVideojuegoPorId = async (req, res) => {
     }
 };
 
-// Crear un videojuego
+/*// Crear un videojuego
 const crearVideojuego = async (req, res) => {
     try {
         const { nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion } = req.body;
@@ -164,8 +164,8 @@ const eliminarvideojuego = async (req, res) =>{
 */
 module.exports = {
     obtenertodosLosvideojuegos,
-    /*obtenerVideojuegoPorId,
-    crearVideojuego,
+    obtenerVideojuegoPorId,
+    /*crearVideojuego,
     actualizarvideojuego,
     eliminarvideojuego*/
 };
