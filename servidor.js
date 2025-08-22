@@ -7,6 +7,7 @@ const {
     obtenerVideojuegoPorId,
     crearVideojuego,
     actualizarvideojuego,
+    actualizarParcialVideojuego,
     /*eliminarvideojuego*/
 } = require('./controladores/videojuegoscontrolador');
 
@@ -26,6 +27,7 @@ app.get('/appi/videojuegos', obtenertodosLosvideojuegos);
 app.get('/appi/videojuegos/:id', obtenerVideojuegoPorId);
 app.post('/appi/videojuegos', crearVideojuego);
 app.put('/appi/videojuegos/:id', actualizarvideojuego);
+app.patch('/appi/videojuegos/:id', actualizarParcialVideojuego);
 /*app.delete('/appi/videojuegos/:id', eliminarvideojuego);*/
 
 // Iniciar servidor y probar conexión

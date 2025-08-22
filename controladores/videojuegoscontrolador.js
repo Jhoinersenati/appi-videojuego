@@ -131,6 +131,57 @@ const actualizarvideojuego = async (req, res) => {
         });
     }
 }
+// Actualizar parcialmente un videojuego (PATCH)
+const actualizarParcialVideojuego = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const campos = req.body; // Los campos que sí se envían
+
+        // Si no se envía nada
+        if (Object.keys(campos).length === 0) {
+            return res.status(400).json({
+                exito: false,
+                mensaje: 'Debes enviar al menos un campo para actualizar'
+            });
+        }
+
+        // Generar dinámicamente el SET para SQL según los campos enviados
+        const columnas = Object.keys(campos).map((columna, i) => `${columna} = $${i + 1}`);
+        const valores = Object.values(campos);
+
+        const consulta = `
+            UPDATE videojuegos
+            SET ${columnas.join(', ')}
+            WHERE id = $${valores.length + 1}
+            RETURNING *;
+        `;
+
+        valores.push(id); // El último valor es el ID para el WHERE
+
+        const resultado = await pool.query(consulta, valores);
+
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({
+                exito: false,
+                mensaje: 'Videojuego no encontrado'
+            });
+        }
+
+        res.json({
+            exito: true,
+            mensaje: 'Videojuego actualizado parcialmente',
+            datos: resultado.rows[0]
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            exito: false,
+            mensaje: 'Error al actualizar parcialmente el videojuego',
+            error: error.message
+        });
+    }
+};
+
 
 /*const eliminarvideojuego = async (req, res) =>{
     try {
@@ -167,5 +218,6 @@ module.exports = {
     obtenerVideojuegoPorId,
     crearVideojuego,
     actualizarvideojuego,
+    actualizarParcialVideojuego 
     /*eliminarvideojuego*/
 };
