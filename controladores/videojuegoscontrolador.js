@@ -22,7 +22,7 @@ const obtenertodosLosvideojuegos = async (req, res) => {
     }
 };
 
-// Obtener videojuego por ID
+/*// Obtener videojuego por ID
 const obtenerVideojuegoPorId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -161,11 +161,11 @@ const eliminarvideojuego = async (req, res) =>{
         });
     }
 }
-
+*/
 module.exports = {
     obtenertodosLosvideojuegos,
-    obtenerVideojuegoPorId,
+    /*obtenerVideojuegoPorId,
     crearVideojuego,
     actualizarvideojuego,
-    eliminarvideojuego
+    eliminarvideojuego*/
 };
