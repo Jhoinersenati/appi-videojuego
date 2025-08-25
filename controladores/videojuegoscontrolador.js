@@ -6,11 +6,22 @@ const obtenertodosLosvideojuegos = async (req, res) => {
         const consulta = 'SELECT * FROM videojuegos ORDER BY id ASC';
         const resultado = await pool.query(consulta);
 
+        // Formatear las fechas antes de enviarlas
+        const videojuegos = resultado.rows.map(v => {
+            if (v.fecha_lanzamiento) {
+                v.fecha_lanzamiento = new Date(v.fecha_lanzamiento).toISOString().split("T")[0];
+            }
+            if (v.fecha_creacion) {
+                v.fecha_creacion = new Date(v.fecha_creacion).toISOString().split("T")[0];
+            }
+            return v;
+        });
+
         res.json({
             exito: true,
             mensaje: 'Videojuegos obtenidos correctamente',
-            datos: resultado.rows,
-            total: resultado.rows.length
+            datos: videojuegos,
+            total: videojuegos.length
         });
     } catch (error) {
         console.error('Error:', error);
@@ -36,10 +47,19 @@ const obtenerVideojuegoPorId = async (req, res) => {
             });
         }
 
+        // Formatear las fechas del videojuego encontrado
+        let videojuego = resultado.rows[0];
+        if (videojuego.fecha_lanzamiento) {
+            videojuego.fecha_lanzamiento = new Date(videojuego.fecha_lanzamiento).toISOString().split("T")[0];
+        }
+        if (videojuego.fecha_creacion) {
+            videojuego.fecha_creacion = new Date(videojuego.fecha_creacion).toISOString().split("T")[0];
+        }
+
         res.json({
             exito: true,
             mensaje: 'Videojuego obtenido correctamente',
-            datos: resultado.rows[0]
+            datos: videojuego
         });
 
     } catch (error) {
@@ -52,11 +72,13 @@ const obtenerVideojuegoPorId = async (req, res) => {
     }
 };
 
+
 // Crear un videojuego
 const crearVideojuego = async (req, res) => {
     try {
         const { nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion } = req.body;
 
+        // Validación de campos obligatorios
         if (!nombre || !genero || !plataforma || !precio) {
             return res.status(400).json({
                 exito: false,
@@ -71,10 +93,22 @@ const crearVideojuego = async (req, res) => {
         const valores = [nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion];
         const resultado = await pool.query(consulta, valores);
 
+        // Obtenemos el videojuego insertado
+        let videojuego = resultado.rows[0];
+
+        // Formateamos las fechas si existen
+        if (videojuego.fecha_lanzamiento) {
+            videojuego.fecha_lanzamiento = new Date(videojuego.fecha_lanzamiento).toISOString().split("T")[0];
+        }
+        if (videojuego.fecha_creacion) {
+            videojuego.fecha_creacion = new Date(videojuego.fecha_creacion).toISOString().split("T")[0];
+        }
+
+        // Respondemos con el videojuego formateado
         res.status(201).json({
             exito: true,
             mensaje: 'Videojuego creado exitosamente',
-            datos: resultado.rows[0]
+            datos: videojuego
         });
 
     } catch (error) {
@@ -85,7 +119,8 @@ const crearVideojuego = async (req, res) => {
             error: error.message
         });
     }
-}
+};
+
 
 const actualizarvideojuego = async (req, res) => {
     try {
@@ -182,7 +217,7 @@ const actualizarParcialVideojuego = async (req, res) => {
     }
 };
 
-
+// Eliminar
 const eliminarvideojuego = async (req, res) =>{
     try {
          const {id} = req.params;
@@ -211,7 +246,57 @@ const eliminarvideojuego = async (req, res) =>{
             error: error.message
         });
     }
-}
+};
+// Listar nombres de videojuegos en orden ascendente
+const obtenerNombresAsc = async (req, res) => {
+    try {
+        const consulta = 'SELECT nombre FROM videojuegos ORDER BY nombre ASC';
+        const resultado = await pool.query(consulta);
+
+        res.json({
+            exito: true,
+            mensaje: 'Nombres obtenidos correctamente en orden ascendente',
+            datos: resultado.rows
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            exito: false,
+            mensaje: 'Error al obtener los nombres',
+            error: error.message
+        });
+    }
+};
+
+/*// Listar videojuegos por fecha de lanzamiento en orden ascendente
+const obtenerFechasAsc = async (req, res) => {
+    try {
+        const consulta = 'SELECT nombre, fecha_lanzamiento FROM videojuegos ORDER BY fecha_lanzamiento ASC';
+        const resultado = await pool.query(consulta);
+
+        // Formatear las fechas
+        const datos = resultado.rows.map(v => {
+            if (v.fecha_lanzamiento) {
+                v.fecha_lanzamiento = new Date(v.fecha_lanzamiento).toISOString().split("T")[0];
+            }
+            return v;
+        });
+
+        res.json({
+            exito: true,
+            mensaje: 'Fechas obtenidas correctamente en orden ascendente',
+            datos: datos
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            exito: false,
+            mensaje: 'Error al obtener las fechas',
+            error: error.message
+        });
+    }
+};
+*/
 
 module.exports = {
     obtenertodosLosvideojuegos,
@@ -219,5 +304,7 @@ module.exports = {
     crearVideojuego,
     actualizarvideojuego,
     actualizarParcialVideojuego, 
-    eliminarvideojuego
+    eliminarvideojuego,
+    obtenerNombresAsc,    
+    /*obtenerFechasAsc  */ 
 };

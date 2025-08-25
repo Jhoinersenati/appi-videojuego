@@ -8,7 +8,10 @@ const {
     crearVideojuego,
     actualizarvideojuego,
     actualizarParcialVideojuego,
-    eliminarvideojuego
+    eliminarvideojuego,
+    obtenerNombresAsc,  
+    /*obtenerFechasAsc  */
+
 } = require('./controladores/videojuegoscontrolador');
 
 const app = express();
@@ -29,6 +32,8 @@ app.post('/appi/videojuegos', crearVideojuego);
 app.put('/appi/videojuegos/:id', actualizarvideojuego);
 app.patch('/appi/videojuegos/:id', actualizarParcialVideojuego);
 app.delete('/appi/videojuegos/:id', eliminarvideojuego);
+app.get('/appi/videojuegos/nombres/asc', obtenerNombresAsc);
+/*app.get('/appi/videojuegos/fechas/asc', obtenerFechasAsc);*/
 
 // Iniciar servidor y probar conexión
 const iniciarServidor = async () => {
