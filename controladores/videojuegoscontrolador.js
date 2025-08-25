@@ -268,7 +268,7 @@ const obtenerNombresAsc = async (req, res) => {
     }
 };
 
-/*// Listar videojuegos por fecha de lanzamiento en orden ascendente
+// Listar videojuegos por fecha de lanzamiento en orden ascendente
 const obtenerFechasAsc = async (req, res) => {
     try {
         const consulta = 'SELECT nombre, fecha_lanzamiento FROM videojuegos ORDER BY fecha_lanzamiento ASC';
@@ -296,7 +296,7 @@ const obtenerFechasAsc = async (req, res) => {
         });
     }
 };
-*/
+
 
 module.exports = {
     obtenertodosLosvideojuegos,
@@ -306,5 +306,5 @@ module.exports = {
     actualizarParcialVideojuego, 
     eliminarvideojuego,
     obtenerNombresAsc,    
-    /*obtenerFechasAsc  */ 
+    obtenerFechasAsc 
 };
