@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node servidor.js",
-    "jhoiner": "nodemon servidor.js"
+    "jhoiner": "node servidor.js",
+    "dev": "nodemon servidor.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
