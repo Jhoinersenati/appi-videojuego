@@ -1,28 +1,16 @@
 const { pool } = require('../configuracion/baseDatos');
 
 // Obtener todos los videojuegos
-const obtenertodosLosvideojuegos = async (req, res) => {
+const obtenerTodosLosVideojuegos = async (req, res) => {
     try {
         const consulta = 'SELECT * FROM videojuegos ORDER BY id ASC';
         const resultado = await pool.query(consulta);
 
-        // Formatear las fechas antes de enviarlas
-        const videojuegos = resultado.rows.map(v => {
-            if (v.fecha_lanzamiento) {
-                v.fecha_lanzamiento = new Date(v.fecha_lanzamiento).toISOString().split("T")[0];
-            }
-            if (v.fecha_creacion) {
-                v.fecha_creacion = new Date(v.fecha_creacion).toISOString().split("T")[0];
-            }
-            return v;
+        res.status(200).json({
+            exito: true,
+            datos: resultado.rows
         });
 
-        res.json({
-            exito: true,
-            mensaje: 'Videojuegos obtenidos correctamente',
-            datos: videojuegos,
-            total: videojuegos.length
-        });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({
@@ -33,7 +21,7 @@ const obtenertodosLosvideojuegos = async (req, res) => {
     }
 };
 
-// Obtener videojuego por ID
+// Obtener un videojuego por ID
 const obtenerVideojuegoPorId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -47,19 +35,9 @@ const obtenerVideojuegoPorId = async (req, res) => {
             });
         }
 
-        // Formatear las fechas del videojuego encontrado
-        let videojuego = resultado.rows[0];
-        if (videojuego.fecha_lanzamiento) {
-            videojuego.fecha_lanzamiento = new Date(videojuego.fecha_lanzamiento).toISOString().split("T")[0];
-        }
-        if (videojuego.fecha_creacion) {
-            videojuego.fecha_creacion = new Date(videojuego.fecha_creacion).toISOString().split("T")[0];
-        }
-
-        res.json({
+        res.status(200).json({
             exito: true,
-            mensaje: 'Videojuego obtenido correctamente',
-            datos: videojuego
+            datos: resultado.rows[0]
         });
 
     } catch (error) {
@@ -72,13 +50,11 @@ const obtenerVideojuegoPorId = async (req, res) => {
     }
 };
 
-
-// Crear un videojuego
+// Crear un nuevo videojuego
 const crearVideojuego = async (req, res) => {
     try {
-        const { nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion } = req.body;
+        const { nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion, url_img } = req.body;
 
-        // Validación de campos obligatorios
         if (!nombre || !genero || !plataforma || !precio) {
             return res.status(400).json({
                 exito: false,
@@ -87,28 +63,17 @@ const crearVideojuego = async (req, res) => {
         }
 
         const consulta = `
-            INSERT INTO videojuegos (nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+            INSERT INTO videojuegos (nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion, url_img)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;
+        `;
 
-        const valores = [nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion];
+        const valores = [nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion, url_img];
         const resultado = await pool.query(consulta, valores);
 
-        // Obtenemos el videojuego insertado
-        let videojuego = resultado.rows[0];
-
-        // Formateamos las fechas si existen
-        if (videojuego.fecha_lanzamiento) {
-            videojuego.fecha_lanzamiento = new Date(videojuego.fecha_lanzamiento).toISOString().split("T")[0];
-        }
-        if (videojuego.fecha_creacion) {
-            videojuego.fecha_creacion = new Date(videojuego.fecha_creacion).toISOString().split("T")[0];
-        }
-
-        // Respondemos con el videojuego formateado
         res.status(201).json({
             exito: true,
             mensaje: 'Videojuego creado exitosamente',
-            datos: videojuego
+            datos: resultado.rows[0]
         });
 
     } catch (error) {
@@ -121,13 +86,12 @@ const crearVideojuego = async (req, res) => {
     }
 };
 
-
-const actualizarvideojuego = async (req, res) => {
+// Actualizar un videojuego existente
+const actualizarVideojuego = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion } = req.body;
+        const { nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion, url_img } = req.body;
 
-        
         if (!nombre || !genero || !plataforma || !precio) {
             return res.status(400).json({
                 exito: false,
@@ -137,11 +101,12 @@ const actualizarvideojuego = async (req, res) => {
 
         const consulta = `
             UPDATE videojuegos
-            SET nombre = $1, genero = $2, plataforma = $3, precio = $4, fecha_lanzamiento = $5, desarrollador = $6, 
-            descripcion = $7 WHERE id = $8 RETURNING *
+            SET nombre = $1, genero = $2, plataforma = $3, precio = $4, fecha_lanzamiento = $5, desarrollador = $6,
+                descripcion = $7, url_img = $8
+            WHERE id = $9 RETURNING *;
         `;
 
-        const valores = [nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion, id];
+        const valores = [nombre, genero, plataforma, precio, fecha_lanzamiento, desarrollador, descripcion, url_img, id];
         const resultado = await pool.query(consulta, valores);
 
         if (resultado.rows.length === 0) {
@@ -165,34 +130,27 @@ const actualizarvideojuego = async (req, res) => {
             error: error.message
         });
     }
-}
-// Actualizar parcialmente un videojuego (PATCH)
+};
+
+// Actualizar parcialmente un videojuego
 const actualizarParcialVideojuego = async (req, res) => {
     try {
         const { id } = req.params;
-        const campos = req.body; // Los campos que sí se envían
+        const campos = Object.keys(req.body);
+        const valores = Object.values(req.body);
 
-        // Si no se envía nada
-        if (Object.keys(campos).length === 0) {
+        if (campos.length === 0) {
             return res.status(400).json({
                 exito: false,
-                mensaje: 'Debes enviar al menos un campo para actualizar'
+                mensaje: 'No se enviaron campos para actualizar'
             });
         }
 
-        // Generar dinámicamente el SET para SQL según los campos enviados
-        const columnas = Object.keys(campos).map((columna, i) => `${columna} = $${i + 1}`);
-        const valores = Object.values(campos);
+        // Construimos la consulta dinámicamente
+        const setClause = campos.map((campo, i) => `${campo} = $${i + 1}`).join(', ');
+        const consulta = `UPDATE videojuegos SET ${setClause} WHERE id = $${campos.length + 1} RETURNING *;`;
 
-        const consulta = `
-            UPDATE videojuegos
-            SET ${columnas.join(', ')}
-            WHERE id = $${valores.length + 1}
-            RETURNING *;
-        `;
-
-        valores.push(id); // El último valor es el ID para el WHERE
-
+        valores.push(id);
         const resultado = await pool.query(consulta, valores);
 
         if (resultado.rows.length === 0) {
@@ -202,11 +160,12 @@ const actualizarParcialVideojuego = async (req, res) => {
             });
         }
 
-        res.json({
+        res.status(200).json({
             exito: true,
             mensaje: 'Videojuego actualizado parcialmente',
             datos: resultado.rows[0]
         });
+
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({
@@ -217,22 +176,21 @@ const actualizarParcialVideojuego = async (req, res) => {
     }
 };
 
-// Eliminar
-const eliminarvideojuego = async (req, res) =>{
+// Eliminar un videojuego
+const eliminarVideojuego = async (req, res) => {
     try {
-         const {id} = req.params;
-        
-        const consulta = 'DELETE FROM videojuegos WHERE id = $1 RETURNING * ';
+        const { id } = req.params;
+        const consulta = 'DELETE FROM videojuegos WHERE id = $1 RETURNING *';
         const resultado = await pool.query(consulta, [id]);
 
-         if (resultado.rows.length === 0) {
+        if (resultado.rows.length === 0) {
             return res.status(404).json({
                 exito: false,
                 mensaje: 'Videojuego no encontrado'
             });
         }
 
-        res.json({
+        res.status(200).json({
             exito: true,
             mensaje: 'Videojuego eliminado exitosamente',
             datos: resultado.rows[0]
@@ -247,6 +205,7 @@ const eliminarvideojuego = async (req, res) =>{
         });
     }
 };
+
 // Listar nombres de videojuegos en orden ascendente
 const obtenerNombresAsc = async (req, res) => {
     try {
@@ -271,10 +230,9 @@ const obtenerNombresAsc = async (req, res) => {
 // Listar videojuegos por fecha de lanzamiento en orden ascendente
 const obtenerFechasAsc = async (req, res) => {
     try {
-        const consulta = 'SELECT nombre, fecha_lanzamiento FROM videojuegos ORDER BY fecha_lanzamiento ASC';
+        const consulta = 'SELECT fecha_lanzamiento FROM videojuegos ORDER BY fecha_lanzamiento ASC';
         const resultado = await pool.query(consulta);
 
-        // Formatear las fechas
         const datos = resultado.rows.map(v => {
             if (v.fecha_lanzamiento) {
                 v.fecha_lanzamiento = new Date(v.fecha_lanzamiento).toISOString().split("T")[0];
@@ -297,14 +255,13 @@ const obtenerFechasAsc = async (req, res) => {
     }
 };
 
-
 module.exports = {
-    obtenertodosLosvideojuegos,
+    obtenerTodosLosVideojuegos,
     obtenerVideojuegoPorId,
     crearVideojuego,
-    actualizarvideojuego,
-    actualizarParcialVideojuego, 
-    eliminarvideojuego,
-    obtenerNombresAsc,    
-    obtenerFechasAsc 
+    actualizarVideojuego,
+    actualizarParcialVideojuego,
+    eliminarVideojuego,
+    obtenerNombresAsc,
+    obtenerFechasAsc
 };

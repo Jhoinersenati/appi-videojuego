@@ -3,14 +3,14 @@ const cors = require('cors');
 require('dotenv').config();
 const { probarConexion } = require('./configuracion/baseDatos');
 const {
-    obtenertodosLosvideojuegos,
+    obtenerTodosLosVideojuegos,
     obtenerVideojuegoPorId,
     crearVideojuego,
-    actualizarvideojuego,
+    actualizarVideojuego,
     actualizarParcialVideojuego,
-    eliminarvideojuego,
+    eliminarVideojuego,
     obtenerNombresAsc,  
-    obtenerFechasAsc
+    obtenerFechasAsc 
 
 } = require('./controladores/videojuegoscontrolador');
 
@@ -26,15 +26,14 @@ app.get('/', (req, res) => {
     res.send('API de videojuegos funcionando');
 });
 
-app.get('/appi/videojuegos', obtenertodosLosvideojuegos);
+app.get('/appi/videojuegos', obtenerTodosLosVideojuegos);
 app.get('/appi/videojuegos/:id', obtenerVideojuegoPorId);
 app.post('/appi/videojuegos', crearVideojuego);
-app.put('/appi/videojuegos/:id', actualizarvideojuego);
+app.put('/appi/videojuegos/:id', actualizarVideojuego);
 app.patch('/appi/videojuegos/:id', actualizarParcialVideojuego);
-app.delete('/appi/videojuegos/:id', eliminarvideojuego);
+app.delete('/appi/videojuegos/:id', eliminarVideojuego);
 app.get('/appi/videojuegos/nombres/asc', obtenerNombresAsc);
 app.get('/appi/videojuegos/fechas/asc', obtenerFechasAsc);
-
 // Iniciar servidor y probar conexión
 const iniciarServidor = async () => {
     try {
